@@ -12,7 +12,7 @@ import {
   Archivo_600SemiBold
 } from '@expo-google-fonts/archivo';
 
-import { CarDetails } from './src/screens/CarDetails';
+import { ScheduleDetails } from './src/screens/ScheduleDetails';
 
 import theme from './src/styles/theme';
 
@@ -31,7 +31,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CarDetails />
+      <ScheduleDetails />
     </ThemeProvider>
   )
 }
