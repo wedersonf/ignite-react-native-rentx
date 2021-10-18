@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   Alert
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from 'styled-components';
 import * as Yup from 'yup';
 
@@ -24,6 +25,7 @@ import {
 
 export function SignIn(){
   const theme = useTheme();
+  const navigation = useNavigation();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -49,6 +51,10 @@ export function SignIn(){
         );
       }
     }
+  }
+
+  function handleNewAccount() {
+    navigation.navigate('SignUpFirstStep');
   }
 
   return (
@@ -101,8 +107,8 @@ export function SignIn(){
 
             <Button 
               title="Criar conta gratuíta"
-              onPress={() => {}}
-              enabled={false}
+              onPress={handleNewAccount}
+              enabled={true}
               loading={false}
               color={theme.colors.background_secondary}
               light
