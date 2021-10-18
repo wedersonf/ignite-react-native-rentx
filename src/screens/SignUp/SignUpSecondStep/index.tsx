@@ -1,6 +1,6 @@
-import React from 'react';
-import { Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Alert, Keyboard, KeyboardAvoidingView, TouchableWithoutFeedback } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { BackButton } from '../../../components/BackButton';
 import { Bullet } from '../../../components/Bullet';
@@ -18,12 +18,36 @@ import {
 } from './styles';
 import { useTheme } from 'styled-components';
 
+interface Params {
+  user: {
+    name: string;
+    email: string;
+    driverLicense: string;
+  }
+}
+
 export function SignUpSecondStep(){
   const theme = useTheme();
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+
+  const { user } = route.params as Params;
 
   function handleBack() {
     navigation.goBack();
+  }
+
+  function handleRegister() {
+    if (!password || !passwordConfirm) {
+      return Alert.alert('Opa', 'Informe a senha e a confirmação');
+    }
+
+    if (password != passwordConfirm) {
+      return Alert.alert('Opa', 'As senhas não são iguais');
+    }
   }
 
   return (
@@ -53,16 +77,21 @@ export function SignUpSecondStep(){
             <PasswordInput 
               iconName="lock"
               placeholder="Senha"
+              value={password}
+              onChangeText={setPassword}
             />
             <PasswordInput 
               iconName="lock"
               placeholder="Repetir senha"
+              value={passwordConfirm}
+              onChangeText={setPasswordConfirm}
             />
           </Form>
 
           <Button
             title="Cadastrar"
             color={theme.colors.success}
+            onPress={handleRegister}
           />
         </Container>
       </TouchableWithoutFeedback>
