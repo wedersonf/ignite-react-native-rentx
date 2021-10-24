@@ -22,7 +22,7 @@ export function PasswordInput({
 }: Props){
   const theme = useTheme();
 
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
