@@ -12,11 +12,11 @@ const { Navigator, Screen } = createStackNavigator();
 
 export function AppStackRoutes() {
   return (
-    <Navigator initialRouteName="Home" screenOptions={{
+    <Navigator initialRouteName="AppHome" screenOptions={{
       headerShown: false,
     }}>
       <Screen 
-        name="Home"
+        name="AppHome"
         component={Home}
         options={{
           gestureEnabled: false
