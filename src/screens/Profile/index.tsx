@@ -35,7 +35,7 @@ import {
 export function Profile(){
   const theme = useTheme();
   const navigation = useNavigation();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   const [option, setOption] = useState<'dataEdit' | 'passwordEdit'>('dataEdit');
   const [avatar, setAvatar] = useState(user.avatar);
@@ -43,10 +43,6 @@ export function Profile(){
   const [driverLicense, setDriverLicense] = useState(user.driver_license);
 
   function handleBack() {
-    navigation.goBack();
-  }
-
-  function handleSignOut() {
     navigation.goBack();
   }
 
@@ -82,7 +78,7 @@ export function Profile(){
                 onPress={handleBack} 
               />
               <HeaderTitle>Editar Perfil</HeaderTitle>
-              <LogoutButton onPress={handleSignOut}>
+              <LogoutButton onPress={signOut}>
                 <Feather 
                   name="power" 
                   size={24} 
