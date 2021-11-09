@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Alert, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { synchronize } from '@nozbe/watermelondb/sync';
+
+import { database } from '../../database';
+import { Car as ModelCar } from '../../database/model/Car';
+import api from '../../service/api';
 
 import Logo from '../../assets/logo.svg';
 
@@ -16,18 +21,32 @@ import {
   CarList,
 } from './styles';
 
-import api from '../../service/api';
-import { CarDTO } from '../../dtos/CarDTO';
-
 export function Home(){
   const navigation = useNavigation();
   const netInfo = useNetInfo();
 
-  const [cars, setCars] = useState<CarDTO[]>([]);
+  const [cars, setCars] = useState<ModelCar[]>([]);
   const [loading, setLoading] = useState(true);
 
-  function handleCarDetails(car: CarDTO) {
+  function handleCarDetails(car: ModelCar) {
     navigation.navigate('CarDetails', { car });
+  }
+
+  async function offlineSynchronize() {
+    await synchronize({
+      database,
+      pullChanges: async ({ lastPulledAt }) => {
+        const response = await api
+          .get(`cars/sync/pull?lastPulledVersion=${lastPulledAt || 0}`);
+
+        const { changes, latestVersion } = response.data;
+        return { changes, timestamp: latestVersion };
+      },
+      pushChanges: async ({ changes }) => {
+        const user = changes.users;
+        await api.post('/users/sync', user);
+      }
+    });
   }
 
   useEffect(() => {
@@ -35,10 +54,11 @@ export function Home(){
 
     async function fetchCars() {
       try {
-        const response = await api.get('/cars');
+        const carCollection = database.get<ModelCar>('cars');
+        const cars = await carCollection.query().fetch();
 
         if (isMounted) {
-          setCars(response.data);
+          setCars(cars);
         }
       } catch (error) {
         console.log(error);
@@ -57,10 +77,8 @@ export function Home(){
   }, []);
 
   useEffect(() => {
-    if (netInfo.isConnected) {
-      Alert.alert('Voce esta online');
-    } else {
-      Alert.alert('Voce esta offline');
+    if (netInfo.isConnected === true) {
+      offlineSynchronize();
     }
   }, [netInfo.isConnected]);
 
